@@ -1,4 +1,4 @@
-        // --- Mock Student Data ---
+    // --- Mock Student Data ---
         const studentData = {
         "9220": { nama: "Adimas Aji Kuncoro Yekti", kelas: "XII A", gender: "Laki-laki", tempatLahir: "Malang", ttl: "18 Juni 2007", status: "LULUS" },
         "9256": { nama: "Anggelina Putri Anggaeni", kelas: "XII A", gender: "Perempuan", tempatLahir: "Malang", ttl: "11 November 2007", status: "LULUS" },
@@ -443,6 +443,39 @@
         const detailsContent = document.getElementById('details-content');
         const detailsArrow = document.getElementById('details-arrow');
 
+        // --- Countdown Logic ---
+        const countdownSection = document.getElementById('countdown-section');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        // !! PENTING: Ubah tarikh ini kepada tarikh pengumuman sebenar anda (Tahun, Bulan-1, Hari, Jam, Minit, Saat, Zon Masa)
+        // Contoh: "2025-11-07T10:00:00+07:00" = 4 Mei 2026, 10:00 pagi WIB (GMT+7)
+        const announcementDate = new Date("2026-05-04T10:00:00+07:00").getTime();
+
+        const countdownTimer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = announcementDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                countdownSection.classList.add('hidden');
+                formSection.classList.remove('hidden');
+                formSection.classList.add('fade-in-up');
+            } else {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                daysEl.textContent = String(days).padStart(2, '0');
+                hoursEl.textContent = String(hours).padStart(2, '0');
+                minutesEl.textContent = String(minutes).padStart(2, '0');
+                secondsEl.textContent = String(seconds).padStart(2, '0');
+            }
+        }, 1000);
+
         // --- Event Listener for Form Submission ---
         nisForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -484,6 +517,7 @@
         checkAgainButton.addEventListener('click', function() {
             resultSection.classList.add('hidden');
             formSection.classList.remove('hidden');
+            formSection.classList.add('fade-in-up');
             nisInput.value = '';
             errorMessage.classList.add('hidden');
             nisInput.focus();
@@ -543,7 +577,7 @@
         
         const generateAiResponse = (userInput) => {
             const lowerCaseInput = userInput.toLowerCase();
-            let response = "Maaf, saya tidak mengerti pertanyaan Anda. Anda bisa bertanya tentang 'info kelulusan', 'pendaftaran', atau 'ijazah'.";
+            let response = "Maaf, saya tidak mengerti pertanyaan Anda. Anda bisa bertanya tentang 'info kelulusan', 'pendaftaran', atau 'biaya'.";
 
             if (lowerCaseInput.includes('lulus')) {
                 response = "Untuk mengetahui status kelulusan, silakan masukkan NIS Anda pada kolom yang tersedia di halaman utama.";
@@ -553,8 +587,8 @@
                 response = "Ini adalah portal resmi pengumuman kelulusan SMAN 1 Turen. Informasi lebih lanjut dapat dilihat di website resmi sekolah.";
             } else if (lowerCaseInput.includes('daftar') || lowerCaseInput.includes('pendaftaran')) {
                 response = "Informasi pendaftaran untuk jenjang selanjutnya (kuliah/kerja) dapat dikonsultasikan dengan guru BK Anda.";
-            } else if (lowerCaseInput.includes('ijazah')) {
-                response = "Semua informasi mengenai dokumen resmi seperti ijazah bisa diambil di sekolah sesuai edaran resmi.";
+            } else if (lowerCaseInput.includes('biaya')) {
+                response = "Semua informasi mengenai administrasi dan biaya setelah kelulusan akan diumumkan melalui surat resmi.";
             } else if (lowerCaseInput.includes('terima kasih')) {
                 response = "Sama-sama! Senang bisa membantu.";
             } else if (lowerCaseInput.includes('halo') || lowerCaseInput.includes('hai')) {
@@ -577,4 +611,4 @@
         });
 
         // Initial AI message
-        addMessage("Halo! Selamat datang di Bot Mieprans. Kamu bisa bertanya mengenai info kelulusan, pendaftaran, atau ijazah. Apa yang bisa saya bantu?", "ai");
+        addMessage("Halo! Selamat datang di Info Bot SMAN 1 Turen. Ada yang bisa saya bantu?", "ai");
